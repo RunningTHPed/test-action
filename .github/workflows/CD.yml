@@ -1,0 +1,21 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]   # ชื่อต้องตรงกับ name: ใน ci.yml
+    types:
+      - completed
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # รันเฉพาะ CI ผ่านเท่านั้น
+    runs-on: ubuntu-latest
+    environment: production   # รอ reviewer approve ตรงนี้
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy
+        run: |
+          echo "Deploying to production..."
+          echo "Deploy complete!"
